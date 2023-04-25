@@ -11,8 +11,11 @@ struct RecipeView: View {
     @State private var RecipeDetails : [[String : String?]] = []
     let mealID : String
     var body: some View {
-        List(RecipeDetails.first!.keys, id: \.self) { value in
-            Text(value)
+        List {
+            ForEach(Array(RecipeDetails.first?.keys ?? ["" : nil].keys).sorted(), id: \.self) { key in
+                let value = (RecipeDetails.first)![key]
+                Text(value)
+            }
         }
         .task {
             await loadRecipe()
@@ -27,7 +30,6 @@ struct RecipeView: View {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let decodedResponse = try? JSONDecoder().decode(Recipe.self, from: data) {
-                print("Woo")
                 RecipeDetails = decodedResponse.meals
             }
         } catch {
