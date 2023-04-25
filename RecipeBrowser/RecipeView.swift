@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct RecipeView: View {
-    @State private var recipeSteps = [String: String?]()
+    @State private var recipeSteps = [String : String?]()
+    @State private var ingredients = [String : String]()
     
     let mealID : String
     
@@ -20,22 +21,26 @@ struct RecipeView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        AsyncImage(url: URL(string: (recipeSteps["strMealThumb"] ?? "loading" )!)!, scale: 50.0) { image in image.resizable() } placeholder: { Color.gray } .frame(width: 300, height: 300) .clipShape(RoundedRectangle(cornerRadius: 10))
+                        AsyncImage(url: URL(string: (recipeSteps["strMealThumb"] ?? "https://user-images.githubusercontent.com/42506001/221354918-01bf0e89-48be-4df7-85bb-cdf5d0136f2a.png" )!)!, scale: 50.0) { image in image.resizable() } placeholder: { Color.gray } .frame(width: 300, height: 300) .clipShape(RoundedRectangle(cornerRadius: 10))
                         Spacer()
                     }
                     Text("A delicious \((recipeSteps["strArea"] ?? "loading")!) \((recipeSteps["strCategory"] ?? "loading")!.lowercased())!")
                         .font(.caption)
                     Link("Click here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading" )!)!)
+                }
+            }
+            
+            Section(header: Text("You will need:")) {
+                ForEach(Array(ingredients.keys.enumerated()), id: \.element) { _, step in
+                    if let description = ingredients[step] {
+                        Text("Step \(step): \(description)")
+                    } else {
+                        Text("no description")
+                    }
+                }
+            }
+            .headerProminence(.increased)
 
-                }
-            }
-            ForEach(Array(recipeSteps.keys.enumerated()), id: \.element) { _, step in
-                if let description = recipeSteps[step]! {
-                    Text("Step \(step): \(description)")
-                } else {
-                    Text("no description")
-                }
-            }
         }
         .task {
             await loadRecipe()
@@ -53,9 +58,25 @@ struct RecipeView: View {
                 let rawRecipe = decodedResponse.meals.first!
                 let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 })).filter( { !$0.value.isEmpty })).filter( { !($0.value == " ") })
                 recipeSteps = cleanedRecipe
+                ingredients = extractIngredients()
             }
         } catch {
             print("Invalid data")
         }
     }
+    
+    func extractIngredients() -> [String : String] {
+        var blankDict = [String : String]()
+        var counter = 1
+        for key in recipeSteps.keys {
+            if key.contains("strIngredient\(counter)") {
+                blankDict[recipeSteps["strIngredient\(counter)"]!!] = (recipeSteps["strMeasure\(counter)"])!
+                counter += 1
+            }
+        }
+        return blankDict
+    }
 }
+
+
+

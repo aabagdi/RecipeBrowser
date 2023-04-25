@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MealEntry : Codable {
+struct MealEnty : Codable {
     let strMeal : String
     let strMealThumb : String
     let idMeal : String
