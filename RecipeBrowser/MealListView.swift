@@ -11,7 +11,7 @@ struct MealListView: View {
     @State private var meals = [MealEntry]()
     var body: some View {
         NavigationStack {
-            Text("Choose a desert!")
+            Text("Choose a recipe!")
                 .font(.headline)
             List(meals, id: \.idMeal) { item in
                 let foodImage = URL(string: item.strMealThumb)!
