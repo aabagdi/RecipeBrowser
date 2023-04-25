@@ -56,7 +56,7 @@ struct RecipeView: View {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let decodedResponse = try? JSONDecoder().decode(Recipe.self, from: data) {
                 let rawRecipe = decodedResponse.meals.first!
-                let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 })).filter( { !$0.value.isEmpty })).filter( { !($0.value == " ") })
+                let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 }).filter( { !($0.value == " ") })))
                 recipeSteps = cleanedRecipe
                 ingredients = extractIngredients()
             }
