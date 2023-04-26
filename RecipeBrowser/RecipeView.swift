@@ -29,7 +29,7 @@ struct RecipeView: View {
                         }
                         Text("A delicious \((recipeSteps["strArea"] ?? "loading")!) \((recipeSteps["strCategory"] ?? "loading")!.lowercased())!")
                             .font(.caption)
-                        Link("Click here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
+                        Link("Tap here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
                     }
                 }
                 
