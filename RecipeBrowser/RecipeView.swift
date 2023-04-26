@@ -14,7 +14,7 @@ struct RecipeView: View {
     let mealID : String
     
     var body: some View {
-        let imageURL =  "\((recipeSteps["strSource"] ?? "unknown")!)"
+        let imageURL =  "\((recipeSteps["strSource"] ?? "unknown source")!)"
         
         Text((recipeSteps["strMeal"] ?? "loading" )!)
             .font(.headline)
@@ -50,7 +50,7 @@ struct RecipeView: View {
                     Text("Recipe:")
                         .headerProminence(.increased)
                 } footer: {
-                    Text("Recipe courtesy of: \(try! AttributedString(markdown: imageURL))")
+                    Text("Recipe courtesy of \(try! AttributedString(markdown: imageURL))")
                         .font(.caption)
                 }
             }
