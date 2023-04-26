@@ -16,7 +16,7 @@ struct MealListView: View {
             return meals
         }
         else {
-            return meals.filter( {$0.strMeal.localizedCaseInsensitiveContains(searchString)} )
+            return meals.filter({ $0.strMeal.localizedCaseInsensitiveContains(searchString) })
         }
     }
     
