@@ -15,9 +15,6 @@ struct RecipeView: View {
     
     var body: some View {
         let imageURL =  "\((recipeSteps["strSource"] ?? "unknown source")!)"
-        
-        Text((recipeSteps["strMeal"] ?? "loading" )!)
-            .font(.headline)
         GeometryReader { g in
             List {
                 Section {

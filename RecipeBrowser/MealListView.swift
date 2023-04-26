@@ -9,19 +9,31 @@ import SwiftUI
 
 struct MealListView: View {
     @State private var meals = [MealEntry]()
+    @State private var searchString = ""
+    
+    var searchResults : [MealEntry] {
+        if searchString.isEmpty {
+            return meals
+        }
+        else {
+            return meals.filter( {$0.strMeal.contains(searchString)} )
+        }
+    }
+    
     var body: some View {
         NavigationStack {
-            Text("Choose a recipe!")
-                .font(.headline)
-            List(meals, id: \.idMeal) { item in
+
+            List(searchResults, id: \.idMeal) { item in
                 let foodImage = URL(string: item.strMealThumb)!
-                NavigationLink(destination: RecipeView(mealID: item.idMeal)) {
+                NavigationLink(destination: RecipeView(mealID: item.idMeal).navigationTitle(item.strMeal)) {
                     HStack {
                         AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                         Text(item.strMeal)
                     }
                 }
             }
+            .navigationTitle(Text("Choose a recipe!"))
+            .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
             .task {
                 await loadList()
             }
