@@ -26,25 +26,33 @@ struct RecipeView: View {
                     }
                     Text("A delicious \((recipeSteps["strArea"] ?? "loading")!) \((recipeSteps["strCategory"] ?? "loading")!.lowercased())!")
                         .font(.caption)
-                    Link("Click here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading" )!)!)
+                    Link("Click here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
                 }
             }
             
             Section(header: Text("You will need:")) {
-                ForEach(Array(ingredients.keys.enumerated()), id: \.element) { _, step in
-                    if let description = ingredients[step] {
-                        Text("Step \(step): \(description)")
+                ForEach(Array(ingredients.keys.enumerated()), id: \.element) { _, ingredient in
+                    if let amount = ingredients[ingredient] {
+                        Text("**\(ingredient)**: \(amount)")
                     } else {
                         Text("no description")
                     }
                 }
             }
             .headerProminence(.increased)
-
+            
+            Section(header: Text("Recipe:")) {
+                Text((recipeSteps["strInstructions"] ?? "loading")!)
+            }
+            .headerProminence(.increased)
+            
+            Section("Recipe courtesy of \((recipeSteps["strSource"] ?? "unknown")!)") {
+            }
         }
         .task {
             await loadRecipe()
         }
+        
     }
     
     func loadRecipe() async {
@@ -56,7 +64,7 @@ struct RecipeView: View {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let decodedResponse = try? JSONDecoder().decode(Recipe.self, from: data) {
                 let rawRecipe = decodedResponse.meals.first!
-                let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 }).filter( { !($0.value == " ") })))
+                let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 })).filter( { !$0.value.isEmpty })).filter( { !($0.value == " ") })
                 recipeSteps = cleanedRecipe
                 ingredients = extractIngredients()
             }
@@ -67,11 +75,12 @@ struct RecipeView: View {
     
     func extractIngredients() -> [String : String] {
         var blankDict = [String : String]()
-        var counter = 1
-        for key in recipeSteps.keys {
-            if key.contains("strIngredient\(counter)") {
-                blankDict[recipeSteps["strIngredient\(counter)"]!!] = (recipeSteps["strMeasure\(counter)"])!
-                counter += 1
+        for i in 1...20 {
+            if recipeSteps.keys.contains("strIngredient\(i)") {
+                blankDict[recipeSteps["strIngredient\(i)"]!!.capitalized] = (recipeSteps["strMeasure\(i)"])!!
+            }
+            else {
+                return blankDict
             }
         }
         return blankDict
