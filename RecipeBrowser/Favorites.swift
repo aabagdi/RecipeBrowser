@@ -13,6 +13,15 @@ class Favorites : ObservableObject {
     private let key = "FAVES"
     
     init() {
+        if let data = UserDefaults.standard.object(forKey: key) {
+            do {
+                let decoder = JSONDecoder()
+                meals = try decoder.decode(Set<String>.self, from: data as! Data)
+                return
+            } catch {
+                print("Error loading")
+            }
+        }
         meals = []
     }
     
@@ -43,10 +52,11 @@ class Favorites : ObservableObject {
     }
     
     func load() {
-        if let data = UserDefaults.standard.object(forKey: "FAVES") {
+        if let data = UserDefaults.standard.object(forKey: key) {
             do {
                 let decoder = JSONDecoder()
                 meals = try decoder.decode(Set<String>.self, from: data as! Data)
+                return
             } catch {
                 print("Error loading")
             }

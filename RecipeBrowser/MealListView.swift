@@ -50,7 +50,6 @@ struct MealListView: View {
                             }
                         }
                     }
-                    
                 }
                 .navigationTitle(Text("Choose a recipe!"))
                 .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
@@ -58,12 +57,41 @@ struct MealListView: View {
                     await loadList()
                 }
             }
+            .onDisappear {
+                favorites.load()
+            }
             .tabItem {
                 Label("All Recipes", systemImage: "doc.plaintext")
             }
-            
-            
-            
+            NavigationStack {
+                List(searchResults, id: \.idMeal) { item in
+                    if favorites.contains(item) {
+                        let foodImage = URL(string: item.strMealThumb)!
+                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal)) {
+                            HStack {
+                                AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
+                                Text(item.strMeal)
+                                
+                                Spacer()
+                                Image(systemName: "heart.fill")
+                                    .accessibilityLabel("Favorite this recipe!")
+                                    .foregroundColor(Color.red)
+                                    .onTapGesture {
+                                        favorites.remove(item)
+                                }
+                            }
+                        }
+                    }
+                }
+                .navigationTitle(Text("Choose a recipe!"))
+                .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
+            }
+            .onDisappear {
+                favorites.load()
+            }
+            .tabItem {
+                Label("Favorites", systemImage: "heart.fill")
+            }
         }
         .environmentObject(favorites)
     }

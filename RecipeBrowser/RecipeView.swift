@@ -68,9 +68,6 @@ struct RecipeView: View {
                         .font(.caption)
                 }
             }
-            .onAppear {
-                favorites.load()
-            }
             .task {
                 await loadRecipe()
             }
