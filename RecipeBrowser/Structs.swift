@@ -11,6 +11,7 @@ struct MealEntry : Codable {
     let strMeal : String
     let strMealThumb : String
     let idMeal : String
+    
 }
 
 struct MealResult : Codable {
@@ -20,5 +21,4 @@ struct MealResult : Codable {
 struct Recipe: Codable {
     let meals: [[String: String?]]
 }
-
 

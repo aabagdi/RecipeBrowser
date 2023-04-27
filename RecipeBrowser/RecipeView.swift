@@ -9,34 +9,51 @@ import SwiftUI
 
 struct RecipeView: View {
     @State private var recipeSteps = [String : String?]()
-    @State private var ingredients = [String : String]()
+    @State private var servings : Int = 1
+    @EnvironmentObject var favorites : Favorites
     
+    
+    let currentMeal : MealEntry
     let mealID : String
     
     var body: some View {
         let imageURL =  "\((recipeSteps["strSource"] ?? "unknown source")!)"
+        let ingredients = extractIngredients().sorted(by: { $0.key < $1.key} )
         GeometryReader { g in
             List {
                 Section {
                     VStack {
                         HStack {
                             Spacer()
-                            AsyncImage(url: URL(string: (recipeSteps["strMealThumb"] ?? "https://user-images.githubusercontent.com/42506001/221354918-01bf0e89-48be-4df7-85bb-cdf5d0136f2a.png" )!)!, scale: 50.0) { image in image.resizable() } placeholder: { Color.gray } .frame(width: g.size.width * 0.7633587786, height: g.size.width * 0.7633587786) .clipShape(RoundedRectangle(cornerRadius: 10))
+                            AsyncImage(url: URL(string: (recipeSteps["strMealThumb"] ?? "https://htmlcolorcodes.com/assets/images/colors/gray-color-solid-background-1920x1080.png")!)!, scale: 50.0) { image in image.resizable() } placeholder: { Color.gray }
+                                .frame(width: g.size.width * 0.7633587786, height: g.size.width * 0.7633587786) .clipShape(RoundedRectangle(cornerRadius: 10))
                             Spacer()
                         }
                         Text("A delicious \((recipeSteps["strArea"] ?? "loading")!) \((recipeSteps["strCategory"] ?? "loading")!.lowercased())!")
+                            .font(.subheadline)
+                        Text("Tags: \((recipeSteps["strTags"] ?? "N/A")!)")
                             .font(.caption)
                         Link("Tap here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
                     }
                 }
                 
-                Section(header: Text("You will need:")) {
-                    ForEach(Array(ingredients.keys.enumerated()), id: \.element) { _, ingredient in
-                        if let amount = ingredients[ingredient] {
-                            Text("**\(ingredient)**: \(amount)")
-                        } else {
-                            Text("no description")
+                Section {
+                    HStack{
+                        Spacer()
+                        Button(favorites.contains(currentMeal) ? "Remove from Favorites" : "Add to Favorites") {
+                            if favorites.contains(currentMeal) {
+                                favorites.remove(currentMeal)
+                            } else {
+                                favorites.add(currentMeal)
+                            }
                         }
+                        Spacer()
+                    }
+                }
+                
+                Section(header: Text("You will need:")) {
+                    ForEach(ingredients, id: \.0) { pair in
+                        Text("**\(pair.0)**: \(pair.1)")
                     }
                 }
                 .headerProminence(.increased)
@@ -68,7 +85,6 @@ struct RecipeView: View {
                 let rawRecipe = decodedResponse.meals.first!
                 let cleanedRecipe = ((rawRecipe.compactMapValues({ $0 })).filter( { !$0.value.isEmpty })).filter( { !($0.value == " ") })
                 recipeSteps = cleanedRecipe
-                ingredients = extractIngredients()
             }
         } catch {
             print("Invalid data")
