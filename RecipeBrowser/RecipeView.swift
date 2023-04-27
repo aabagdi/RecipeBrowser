@@ -52,8 +52,8 @@ struct RecipeView: View {
                 }
                 
                 Section(header: Text("You will need:")) {
-                    ForEach(ingredients, id: \.0) { pair in
-                        Text("**\(pair.0)**: \(pair.1)")
+                    ForEach(ingredients, id: \.key) { ingredient, amount in
+                        Text("**\(ingredient)**: \(amount)")
                     }
                 }
                 .headerProminence(.increased)
@@ -67,6 +67,9 @@ struct RecipeView: View {
                     Text("Recipe courtesy of \(try! AttributedString(markdown: imageURL))")
                         .font(.caption)
                 }
+            }
+            .onAppear {
+                favorites.load()
             }
             .task {
                 await loadRecipe()

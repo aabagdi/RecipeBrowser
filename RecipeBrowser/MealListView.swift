@@ -22,40 +22,48 @@ struct MealListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List(searchResults, id: \.idMeal) { item in
-                let foodImage = URL(string: item.strMealThumb)!
-                NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal)) {
-                    HStack {
-                        AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
-                        Text(item.strMeal)
-                        if favorites.contains(item) {
-                            Spacer()
-                            Image(systemName: "heart.fill")
-                                .accessibilityLabel("Favorite this recipe!")
-                                .foregroundColor(Color.red)
-                                .onTapGesture {
-                                    favorites.remove(item)
-                                }
-                        }
-                        else {
-                            Spacer()
-                            Image(systemName: "heart")
-                                .accessibilityLabel("Favorite this recipe!")
-                                .foregroundColor(Color.red)
-                                .onTapGesture {
-                                    favorites.add(item)
-                                }
+        TabView {
+            NavigationStack {
+                List(searchResults, id: \.idMeal) { item in
+                    let foodImage = URL(string: item.strMealThumb)!
+                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal)) {
+                        HStack {
+                            AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
+                            Text(item.strMeal)
+                            if favorites.contains(item) {
+                                Spacer()
+                                Image(systemName: "heart.fill")
+                                    .accessibilityLabel("Favorite this recipe!")
+                                    .foregroundColor(Color.red)
+                                    .onTapGesture {
+                                        favorites.remove(item)
+                                    }
+                            }
+                            else {
+                                Spacer()
+                                Image(systemName: "heart")
+                                    .accessibilityLabel("Favorite this recipe!")
+                                    .foregroundColor(Color.red)
+                                    .onTapGesture {
+                                        favorites.add(item)
+                                    }
+                            }
                         }
                     }
+                    
                 }
-
+                .navigationTitle(Text("Choose a recipe!"))
+                .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
+                .task {
+                    await loadList()
+                }
             }
-            .navigationTitle(Text("Choose a recipe!"))
-            .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
-            .task {
-                await loadList()
+            .tabItem {
+                Label("All Recipes", systemImage: "doc.plaintext")
             }
+            
+            
+            
         }
         .environmentObject(favorites)
     }
