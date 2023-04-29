@@ -22,11 +22,10 @@ struct MealListView: View {
     }
     
     var body: some View {
-        TabView {
             NavigationStack {
                 List(searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
-                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal)) {
+                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
                         HStack {
                             AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                             Text(item.strMeal)
@@ -60,14 +59,11 @@ struct MealListView: View {
             .onDisappear {
                 favorites.load()
             }
-            .tabItem {
-                Label("All Recipes", systemImage: "doc.plaintext")
-            }
             NavigationStack {
                 List(searchResults, id: \.idMeal) { item in
                     if favorites.contains(item) {
                         let foodImage = URL(string: item.strMealThumb)!
-                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal)) {
+                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
                             HStack {
                                 AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                                 Text(item.strMeal)
@@ -89,11 +85,6 @@ struct MealListView: View {
             .onDisappear {
                 favorites.load()
             }
-            .tabItem {
-                Label("Favorites", systemImage: "heart.fill")
-            }
-        }
-        .environmentObject(favorites)
     }
     
     func loadList() async {
