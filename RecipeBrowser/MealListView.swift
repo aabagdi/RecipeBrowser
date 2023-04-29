@@ -10,6 +10,7 @@ import SwiftUI
 struct MealListView: View {
     @State private var meals = [MealEntry]()
     @State private var searchString = ""
+    @State private var showingFaves = false
     @StateObject var favorites = Favorites()
     
     var searchResults : [MealEntry] {
@@ -22,6 +23,7 @@ struct MealListView: View {
     }
     
     var body: some View {
+        if !showingFaves {
             NavigationStack {
                 List(searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
@@ -56,9 +58,12 @@ struct MealListView: View {
                     await loadList()
                 }
             }
+            .environmentObject(favorites)
             .onDisappear {
                 favorites.load()
             }
+        }
+        else {
             NavigationStack {
                 List(searchResults, id: \.idMeal) { item in
                     if favorites.contains(item) {
@@ -74,7 +79,7 @@ struct MealListView: View {
                                     .foregroundColor(Color.red)
                                     .onTapGesture {
                                         favorites.remove(item)
-                                }
+                                    }
                             }
                         }
                     }
@@ -82,9 +87,14 @@ struct MealListView: View {
                 .navigationTitle(Text("Choose a recipe!"))
                 .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
             }
+            .environmentObject(favorites)
             .onDisappear {
                 favorites.load()
             }
+        }
+        Button(showingFaves ? "Show all recipes" : "Show favorites") {
+            showingFaves.toggle()
+        }
     }
     
     func loadList() async {
