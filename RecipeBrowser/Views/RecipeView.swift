@@ -11,10 +11,10 @@ struct RecipeView: View {
     @State private var recipeSteps = [String : String?]()
     @EnvironmentObject var favorites : Favorites
     @Binding var id: UUID
-
+    
     let currentMeal : MealEntry
     let mealID : String
-
+    
     var body: some View {
         let imageURL =  "\((recipeSteps["strSource"] ?? "unknown source")!)"
         let ingredients = extractIngredients().sorted(by: { $0.ingredientName < $1.ingredientName} )
@@ -32,33 +32,33 @@ struct RecipeView: View {
                             .font(.subheadline)
                         Text("Tags: \((recipeSteps["strTags"] ?? "N/A")!)")
                             .font(.caption)
-                        Link("Tap here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
                     }
                 }
-
+                
                 Section {
-                    HStack{
+                    HStack {
                         Spacer()
-                        Button(favorites.contains(currentMeal) ? "Remove from Favorites" : "Add to Favorites") {
-                            if favorites.contains(currentMeal) {
-                                favorites.remove(currentMeal)
-                                id = UUID()
-                            } else {
-                                favorites.add(currentMeal)
-                                id = UUID()
+                        Link(destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!) {
+                            HStack {
+                                Spacer()
+                                Image(systemName: "play.rectangle.fill")
+                                    .foregroundColor(Color.red)
+                                    .font(.headline)
+                                Text("Recipe Video")
+                                Spacer()
                             }
                         }
                         Spacer()
                     }
                 }
-
+                
                 Section(header: Text("You will need:")) {
                     ForEach(ingredients, id: \.self) { ingredient in
                         Text("**\(ingredient.ingredientName)**: \(ingredient.amount)")
                     }
                 }
                 .headerProminence(.increased)
-
+                
                 Section {
                     Text((recipeSteps["strInstructions"] ?? "loading")!)
                         .textSelection(.enabled)
@@ -70,15 +70,28 @@ struct RecipeView: View {
                         .font(.caption)
                 }
             }
-            .onDisappear {
-                favorites.save()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        if favorites.contains(currentMeal) {
+                            favorites.remove(currentMeal)
+                            id = UUID()
+                        } else {
+                            favorites.add(currentMeal)
+                            id = UUID()
+                        }
+                    } label: {
+                        Image(systemName: favorites.contains(currentMeal)  ? "heart.fill" : "heart")
+                            .foregroundColor(Color.red)
+                    }
+                }
             }
             .task {
                 await loadRecipe()
             }
         }
     }
-
+    
     func loadRecipe() async {
         guard let url = URL(string: "https://themealdb.com/api/json/v1/1/lookup.php?i=\(mealID)") else {
             print("Invalid URL")
@@ -95,7 +108,7 @@ struct RecipeView: View {
             print("Invalid data")
         }
     }
-
+    
     func extractIngredients() -> [Ingredient] {
         var ingredientList = [Ingredient]()
         for i in 1...20 {
@@ -110,7 +123,7 @@ struct RecipeView: View {
         }
         return ingredientList
     }
-
+    
     func returnMeal() -> MealEntry {
         return currentMeal
     }

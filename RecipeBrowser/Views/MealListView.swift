@@ -24,10 +24,14 @@ struct MealListView: View {
                             Spacer()
                             Image(systemName: favorites.contains(item) ? "heart.fill" : "heart")
                                 .foregroundColor(Color.red)
+                                .onTapGesture {
+                                    favorites.contains(item) ? favorites.remove(item) : favorites.add(item)
+                                }
                         }
                     }
                 }
                 .navigationTitle(Text("Choose a recipe!"))
+                .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for recipe...")
                 .task {
                     await ViewModel.loadList()
@@ -53,12 +57,16 @@ struct MealListView: View {
                                 Spacer()
                                 Image(systemName: "heart.fill")
                                     .foregroundColor(Color.red)
+                                    .onTapGesture {
+                                        favorites.contains(item) ? favorites.remove(item) : favorites.add(item)
+                                    }
                             }
                         }
                     }
                 }
                 .id(id)
                 .navigationTitle(Text("Choose a recipe!"))
+                .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for recipe...")
                 .task {
                     await ViewModel.loadList()
