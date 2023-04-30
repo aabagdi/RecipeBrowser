@@ -12,7 +12,6 @@ extension MealListView {
         @Published var meals = [MealEntry]()
         @Published var searchString = ""
         @Published var showingFaves = false
-        @Published var favorites = Favorites()
         
         var buttonTitle : String {showingFaves ? "Show all recipes" : "Show favorites"}
         
