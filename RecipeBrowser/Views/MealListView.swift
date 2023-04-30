@@ -13,7 +13,8 @@ struct MealListView: View {
     @State var id = UUID()
 
     var body: some View {
-        if !ViewModel.showingFaves {
+        switch ViewModel.showingFaves {
+        case false:
             NavigationStack {
                 List(ViewModel.searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
@@ -44,8 +45,7 @@ struct MealListView: View {
                     }
                 }
             }
-        }
-        else {
+        case true:
             NavigationStack {
                 List(ViewModel.searchResults, id: \.idMeal) { item in
                     if favorites.contains(item) {
@@ -78,9 +78,6 @@ struct MealListView: View {
                         }
                     }
                 }
-            }
-            .onAppear {
-                favorites.load()
             }
         }
     }
