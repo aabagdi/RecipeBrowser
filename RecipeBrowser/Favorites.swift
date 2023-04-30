@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class Favorites : ObservableObject {
     private var meals : Set<String>

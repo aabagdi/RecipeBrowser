@@ -9,9 +9,7 @@ import SwiftUI
 
 struct RecipeView: View {
     @State private var recipeSteps = [String : String?]()
-    @State private var servings : Int = 1
     @EnvironmentObject var favorites : Favorites
-    
     
     let currentMeal : MealEntry
     let mealID : String
@@ -60,6 +58,7 @@ struct RecipeView: View {
                 
                 Section {
                     Text((recipeSteps["strInstructions"] ?? "loading")!)
+                        .textSelection(.enabled)
                 } header: {
                     Text("Recipe:")
                         .headerProminence(.increased)
@@ -67,6 +66,9 @@ struct RecipeView: View {
                     Text("Recipe courtesy of \(try! AttributedString(markdown: imageURL))")
                         .font(.caption)
                 }
+            }
+            .onDisappear {
+                favorites.save()
             }
             .task {
                 await loadRecipe()
@@ -102,6 +104,10 @@ struct RecipeView: View {
             }
         }
         return blankDict
+    }
+    
+    func returnMeal() -> MealEntry {
+        return currentMeal
     }
 }
 

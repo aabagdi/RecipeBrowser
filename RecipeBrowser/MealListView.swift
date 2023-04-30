@@ -8,107 +8,66 @@
 import SwiftUI
 
 struct MealListView: View {
-    @State private var meals = [MealEntry]()
-    @State private var searchString = ""
-    @State private var showingFaves = false
-    @StateObject var favorites = Favorites()
-    
-    var searchResults : [MealEntry] {
-        if searchString.isEmpty {
-            return meals
-        }
-        else {
-            return meals.filter({ $0.strMeal.localizedCaseInsensitiveContains(searchString) })
-        }
-    }
+    @ObservedObject var ViewModel : MealListViewModel = MealListViewModel()
     
     var body: some View {
-        if !showingFaves {
+        if !ViewModel.showingFaves {
             NavigationStack {
-                List(searchResults, id: \.idMeal) { item in
+                List(ViewModel.searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
-                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
+                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(ViewModel.favorites)) {
                         HStack {
                             AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                             Text(item.strMeal)
-                            if favorites.contains(item) {
-                                Spacer()
-                                Image(systemName: "heart.fill")
-                                    .accessibilityLabel("Favorite this recipe!")
-                                    .foregroundColor(Color.red)
-                                    .onTapGesture {
-                                        favorites.remove(item)
-                                    }
-                            }
-                            else {
-                                Spacer()
-                                Image(systemName: "heart")
-                                    .accessibilityLabel("Favorite this recipe!")
-                                    .foregroundColor(Color.red)
-                                    .onTapGesture {
-                                        favorites.add(item)
-                                    }
-                            }
+                            Spacer()
+                            Image(systemName: ViewModel.favorites.contains(item) ? "heart.fill" : "heart")
+                                .foregroundColor(Color.red)
                         }
                     }
                 }
                 .navigationTitle(Text("Choose a recipe!"))
-                .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
+                .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
                 .task {
-                    await loadList()
+                    await ViewModel.loadList()
                 }
-            }
-            .environmentObject(favorites)
-            .onDisappear {
-                favorites.load()
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(ViewModel.buttonTitle) {
+                            ViewModel.showingFaves.toggle()
+                        }
+                    }
+                }
             }
         }
         else {
             NavigationStack {
-                List(searchResults, id: \.idMeal) { item in
-                    if favorites.contains(item) {
+                List(ViewModel.searchResults, id: \.idMeal) { item in
+                    if ViewModel.favorites.contains(item) {
                         let foodImage = URL(string: item.strMealThumb)!
-                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
+                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(ViewModel.favorites)) {
                             HStack {
                                 AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                                 Text(item.strMeal)
-                                
                                 Spacer()
                                 Image(systemName: "heart.fill")
-                                    .accessibilityLabel("Favorite this recipe!")
                                     .foregroundColor(Color.red)
-                                    .onTapGesture {
-                                        favorites.remove(item)
-                                    }
                             }
                         }
                     }
                 }
                 .navigationTitle(Text("Choose a recipe!"))
-                .searchable(text: $searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
+                .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(ViewModel.buttonTitle) {
+                            ViewModel.showingFaves.toggle()
+                        }
+                    }
+                }
             }
-            .environmentObject(favorites)
-            .onDisappear {
-                favorites.load()
+            .onAppear {
+                ViewModel.favorites.load()
             }
-        }
-        Button(showingFaves ? "Show all recipes" : "Show favorites") {
-            showingFaves.toggle()
-        }
-    }
-    
-    func loadList() async {
-        guard let url = URL(string: "https://themealdb.com/api/json/v1/1/filter.php?c=Dessert") else {
-            print("Invalid URL")
-            return
-        }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            if let decodedResponse = try? JSONDecoder().decode(MealResult.self, from: data) {
-                meals = decodedResponse.meals
-            }
-        } catch {
-            print("Invalid data")
         }
     }
 }
