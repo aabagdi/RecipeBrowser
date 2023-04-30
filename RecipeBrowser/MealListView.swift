@@ -16,7 +16,7 @@ struct MealListView: View {
             NavigationStack {
                 List(ViewModel.searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
-                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
+                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationBarTitle(item.strMeal, displayMode: .inline).environmentObject(favorites)) {
                         HStack {
                             AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                             Text(item.strMeal)
@@ -26,7 +26,7 @@ struct MealListView: View {
                         }
                     }
                 }
-                .navigationTitle(Text("Choose a recipe!"))
+                .navigationBarTitle(Text("Choose a recipe!"), displayMode: .inline)
                 .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
                 .task {
                     await ViewModel.loadList()
@@ -45,7 +45,7 @@ struct MealListView: View {
                 List(ViewModel.searchResults, id: \.idMeal) { item in
                     if favorites.contains(item) {
                         let foodImage = URL(string: item.strMealThumb)!
-                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
+                        NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationBarTitle(item.strMeal, displayMode: .inline).environmentObject(favorites)) {
                             HStack {
                                 AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                                 Text(item.strMeal)
@@ -56,7 +56,7 @@ struct MealListView: View {
                         }
                     }
                 }
-                .navigationTitle(Text("Choose a recipe!"))
+                .navigationBarTitle(Text("Choose a recipe!"), displayMode: .inline)
                 .searchable(text: $ViewModel.searchString,  placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search for recipe...")
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
