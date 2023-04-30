@@ -117,10 +117,10 @@ struct RecipeView: View {
                 ingredientList.append(newIngredient)
             }
             else {
-                return ingredientList
+                return Array(Set(ingredientList))
             }
         }
-        return ingredientList
+        return Array(Set(ingredientList))
     }
     
     func returnMeal() -> MealEntry {
