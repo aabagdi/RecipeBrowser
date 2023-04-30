@@ -31,7 +31,7 @@ struct RecipeView: View {
                             .font(.subheadline)
                         Text("Tags: \((recipeSteps["strTags"] ?? "N/A")!)")
                             .font(.caption)
-                        Link("Tap here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
+                        
                     }
                 }
                 
@@ -45,6 +45,20 @@ struct RecipeView: View {
                                 favorites.add(currentMeal)
                             }
                         }
+                        Spacer()
+                    }
+                }
+                
+                Section {
+                    HStack{
+                        Spacer()
+                        Link(destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!) {
+                            HStack {
+                                Image(systemName: "play.rectangle.fill")
+                                Text("Recipe Video")
+                            }
+                        }
+                        
                         Spacer()
                     }
                 }

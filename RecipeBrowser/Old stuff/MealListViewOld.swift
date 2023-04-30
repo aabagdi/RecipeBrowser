@@ -27,7 +27,7 @@ struct MealListViewOld: View {
             NavigationStack {
                 List(searchResults, id: \.idMeal) { item in
                     let foodImage = URL(string: item.strMealThumb)!
-                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites)) {
+                    NavigationLink(destination: RecipeView(currentMeal: item, mealID: item.idMeal).navigationTitle(item.strMeal).environmentObject(favorites).ignoresSafeArea()) {
                         HStack {
                             AsyncImage(url: foodImage, scale: 30.0){ image in image.resizable() } placeholder: { Color.gray } .frame(width: 75, height: 75) .clipShape(RoundedRectangle(cornerRadius: 10))
                             Text(item.strMeal)
