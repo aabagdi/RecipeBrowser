@@ -115,7 +115,6 @@ struct RecipeView: View {
             if recipeSteps.keys.contains("strIngredient\(i)") {
                 let newIngredient = Ingredient(ingredientName: recipeSteps["strIngredient\(i)"]!!.capitalized, amount: (recipeSteps["strMeasure\(i)"])!!)
                 ingredientList.append(newIngredient)
-                //blankDict[recipeSteps["strIngredient\(i)"]!!.capitalized] = (recipeSteps["strMeasure\(i)"])!!
             }
             else {
                 return ingredientList
