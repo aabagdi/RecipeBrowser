@@ -109,18 +109,18 @@ struct RecipeView: View {
         }
     }
     
-    func extractIngredients() -> [Ingredient] {
-        var ingredientList = [Ingredient]()
+    func extractIngredients() -> Set<Ingredient> {
+        var ingredientSet = Set<Ingredient>()
         for i in 1...20 {
             if recipeSteps.keys.contains("strIngredient\(i)") {
                 let newIngredient = Ingredient(ingredientName: recipeSteps["strIngredient\(i)"]!!.capitalized, amount: (recipeSteps["strMeasure\(i)"])!!)
-                ingredientList.append(newIngredient)
+                ingredientSet.insert(newIngredient)
             }
             else {
-                return Array(Set(ingredientList))
+                return ingredientSet
             }
         }
-        return Array(Set(ingredientList))
+        return ingredientSet
     }
     
     func returnMeal() -> MealEntry {
