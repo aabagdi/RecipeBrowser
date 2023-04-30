@@ -22,3 +22,7 @@ struct Recipe: Codable {
     let meals: [[String: String?]]
 }
 
+struct Ingredient : Hashable {
+    let ingredientName : String
+    let amount : String
+}

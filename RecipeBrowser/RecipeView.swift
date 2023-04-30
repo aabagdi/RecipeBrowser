@@ -10,13 +10,14 @@ import SwiftUI
 struct RecipeView: View {
     @State private var recipeSteps = [String : String?]()
     @EnvironmentObject var favorites : Favorites
-    
+    @Binding var id: UUID
+
     let currentMeal : MealEntry
     let mealID : String
-    
+
     var body: some View {
         let imageURL =  "\((recipeSteps["strSource"] ?? "unknown source")!)"
-        let ingredients = extractIngredients().sorted(by: { $0.key < $1.key} )
+        let ingredients = extractIngredients().sorted(by: { $0.ingredientName < $1.ingredientName} )
         GeometryReader { g in
             List {
                 Section {
@@ -31,45 +32,33 @@ struct RecipeView: View {
                             .font(.subheadline)
                         Text("Tags: \((recipeSteps["strTags"] ?? "N/A")!)")
                             .font(.caption)
-                        
+                        Link("Tap here for recipe video!", destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!)
                     }
                 }
-                
+
                 Section {
                     HStack{
                         Spacer()
                         Button(favorites.contains(currentMeal) ? "Remove from Favorites" : "Add to Favorites") {
                             if favorites.contains(currentMeal) {
                                 favorites.remove(currentMeal)
+                                id = UUID()
                             } else {
                                 favorites.add(currentMeal)
+                                id = UUID()
                             }
                         }
                         Spacer()
                     }
                 }
-                
-                Section {
-                    HStack{
-                        Spacer()
-                        Link(destination: URL(string: (recipeSteps["strYoutube"] ?? "loading")!)!) {
-                            HStack {
-                                Image(systemName: "play.rectangle.fill")
-                                Text("Recipe Video")
-                            }
-                        }
-                        
-                        Spacer()
-                    }
-                }
-                
+
                 Section(header: Text("You will need:")) {
-                    ForEach(ingredients, id: \.key) { ingredient, amount in
-                        Text("**\(ingredient)**: \(amount)")
+                    ForEach(ingredients, id: \.self) { ingredient in
+                        Text("**\(ingredient.ingredientName)**: \(ingredient.amount)")
                     }
                 }
                 .headerProminence(.increased)
-                
+
                 Section {
                     Text((recipeSteps["strInstructions"] ?? "loading")!)
                         .textSelection(.enabled)
@@ -89,7 +78,7 @@ struct RecipeView: View {
             }
         }
     }
-    
+
     func loadRecipe() async {
         guard let url = URL(string: "https://themealdb.com/api/json/v1/1/lookup.php?i=\(mealID)") else {
             print("Invalid URL")
@@ -106,24 +95,23 @@ struct RecipeView: View {
             print("Invalid data")
         }
     }
-    
-    func extractIngredients() -> [String : String] {
-        var blankDict = [String : String]()
+
+    func extractIngredients() -> [Ingredient] {
+        var ingredientList = [Ingredient]()
         for i in 1...20 {
             if recipeSteps.keys.contains("strIngredient\(i)") {
-                blankDict[recipeSteps["strIngredient\(i)"]!!.capitalized] = (recipeSteps["strMeasure\(i)"])!!
+                let newIngredient = Ingredient(ingredientName: recipeSteps["strIngredient\(i)"]!!.capitalized, amount: (recipeSteps["strMeasure\(i)"])!!)
+                ingredientList.append(newIngredient)
+                //blankDict[recipeSteps["strIngredient\(i)"]!!.capitalized] = (recipeSteps["strMeasure\(i)"])!!
             }
             else {
-                return blankDict
+                return ingredientList
             }
         }
-        return blankDict
+        return ingredientList
     }
-    
+
     func returnMeal() -> MealEntry {
         return currentMeal
     }
 }
-
-
-

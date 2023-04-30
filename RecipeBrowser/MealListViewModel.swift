@@ -12,6 +12,7 @@ extension MealListView {
         @Published var meals = [MealEntry]()
         @Published var searchString = ""
         @Published var showingFaves = false
+
         
         var buttonTitle : String {showingFaves ? "Show all recipes" : "Show favorites"}
         
@@ -42,6 +43,5 @@ extension MealListView {
         func returnMeals() -> [MealEntry] {
             return meals
         }
-        
     }
 }
