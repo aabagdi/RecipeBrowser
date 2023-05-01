@@ -6,4 +6,4 @@ To favorite recipes, tap on the heart in the main list view or the detailed view
 
 Use the searchbar to find a recipe.
 
-To copy a recipe, go to the detailed view of a recipe, hold, and you can copy the recipe or share it to a friend.
+To copy a recipe, go to the detailed view of a recipe, hold, and you can copy the recipe or share it with a friend.
