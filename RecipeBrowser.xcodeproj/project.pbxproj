@@ -15,6 +15,7 @@
 		396E568929F71BCD00C37C92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 396E568829F71BCD00C37C92 /* Assets.xcassets */; };
 		396E569329F71BD900C37C92 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396E569229F71BD900C37C92 /* Structs.swift */; };
 		396E569529F765F500C37C92 /* RecipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396E569429F765F500C37C92 /* RecipeView.swift */; };
+		397A046429FF3D210069F716 /* RecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397A046329FF3D210069F716 /* RecipeViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		396E568829F71BCD00C37C92 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		396E569229F71BD900C37C92 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		396E569429F765F500C37C92 /* RecipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeView.swift; sourceTree = "<group>"; };
+		397A046329FF3D210069F716 /* RecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				3968512D29FD631D0007280B /* MealListViewModel.swift */,
+				397A046329FF3D210069F716 /* RecipeViewModel.swift */,
 				396E569229F71BD900C37C92 /* Structs.swift */,
 				3968512B29FAB5F40007280B /* Favorites.swift */,
 			);
@@ -232,6 +235,7 @@
 				396E569329F71BD900C37C92 /* Structs.swift in Sources */,
 				396E569529F765F500C37C92 /* RecipeView.swift in Sources */,
 				3968512C29FAB5F40007280B /* Favorites.swift in Sources */,
+				397A046429FF3D210069F716 /* RecipeViewModel.swift in Sources */,
 				3968513029FD65D30007280B /* MealListView.swift in Sources */,
 				396E568529F71BCC00C37C92 /* RecipeBrowserApp.swift in Sources */,
 				3968512E29FD631D0007280B /* MealListViewModel.swift in Sources */,
