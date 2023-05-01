@@ -33,7 +33,7 @@ extension MealListView {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let decodedResponse = try? JSONDecoder().decode(MealResult.self, from: data) {
-                    meals = decodedResponse.meals
+                    meals = decodedResponse.meals.sorted(by: { $0.strMeal < $1.strMeal })
                 }
             } catch {
                 print("Invalid data")
