@@ -17,10 +17,10 @@ extension MealListView {
         var buttonTitle : String {showingFaves ? "Show all recipes" : "Show favorites"}
         
         var searchResults : [MealEntry] {
-            if searchString.isEmpty {
+            switch searchString.isEmpty {
+            case true:
                 return meals
-            }
-            else {
+            case false:
                 return meals.filter({ $0.strMeal.localizedCaseInsensitiveContains(searchString) })
             }
         }
